@@ -24,6 +24,7 @@ export const categories = [
     description:
       "Don't compromise on style! Grab the latest collection from ShoppingSpree.",
     bg: "f5fafd",
+    cat: "men",
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ export const categories = [
     title: "Jackets",
     description: "Winter is here! Are you ready to welcome this winter season?",
     bg: "fbf0f4",
+    cat: "coat",
   },
   {
     id: 3,
@@ -38,6 +40,7 @@ export const categories = [
     title: "Shoes",
     description: "Winter is here! Are you ready to welcome this winter season?",
     bg: "fbf0f4",
+    cat: "shoes",
   },
 ];
 
