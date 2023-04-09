@@ -1,11 +1,14 @@
 import { Add, Remove } from "@material-ui/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import { mobile } from "../responsive";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { publicRequest } from "../requestMethods";
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -73,76 +76,123 @@ const AddContainer = styled.div`
   ${mobile({ width: "100%" })}
 `;
 const AmountContainer = styled.div`
-display: flex;
-align-items: center;
-font-weight: 700;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
 `;
 const Amount = styled.span`
-width: 30px;
-height: 30px;
-border-radius: 10px;
-border: 1px solid teal;
-display: flex;
-align-items: center;
-justify-content: center;
-margin: 0px 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid teal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 5px;
 `;
 const Button = styled.button`
-padding: 15px;
-border: 2px solid teal;
-background-color: white;
-cursor: pointer;
-font-weight: 500;
+  padding: 15px;
+  border: 2px solid teal;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
 
-&:hover {
-  background-color: #f8f4f4;
-}
+  &:hover {
+    background-color: #f8f4f4;
+  }
 `;
 
 const Product = () => {
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await publicRequest.get("products/find/" + id);
+        setProduct(res?.data);
+      } catch (error) {
+        console.log("Error is", error);
+      }
+    };
+    getProduct();
+  }, []);
+
+  const handleQuantity = (type) => {
+    if (type === "inc") {
+      setQuantity((pre) => pre + 1);
+      // setQuantity(quantity + 1);
+    } else {
+      quantity > 1 && setQuantity(quantity - 1);
+      // setQuantity((pre) => pre - 1);
+    }
+  };
+
+  const handleClick = () => {};
+
+  // useEffect(() => {
+  //   const getProduct = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `http://localhost:8000/api/products/find/${id}`
+  //       );
+  //       console.log("axios", res?.data);
+  //     } catch (error) {
+  //       console.log("error is", error);
+  //     }
+  //   };
+  //   getProduct();
+  // }, []);
+
+  // const location = useLocation();
+
+  // const pa = location.pathname;
+  // const id = pa.split("/product/")[1];
+
+  // console.log("product path", id);
   return (
     <Container>
       <Navbar />
       <Announcement />
       <Wrapper>
         <ImageContainer>
-          <Image src="https://i.ibb.co/S6qMxwr/jean.jpg" />
+          <Image src={product?.img} />
         </ImageContainer>
         <InfoContainer>
-          <Title>Denim Jumpsuit</Title>
-          <Desc>
-            In publishing and graphic design, Lorem ipsum is a placeholder text
-            commonly used to demonstrate the visual form of a document or a
-            typeface without relying on meaningful content. Lorem ipsum may be
-            used as a placeholder before final copy is available. It is also
-            used to temporarily replace.
-          </Desc>
-          <Price>₹ 1,599</Price>
+          <Title>{product.title}</Title>
+          <Desc>{product.desc}</Desc>
+          <Price>₹ {product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
+              {product &&
+                product.color &&
+                product.color.map((c) => (
+                  <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+                ))}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                {product &&
+                  product.size &&
+                  product.size.map((s) => (
+                    <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                  ))}
               </FilterSize>
             </Filter>
           </FilterContainer>
           <AddContainer>
             <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
+              <Remove onClick={() => handleQuantity("dec")} />
+              <Amount>{quantity}</Amount>
+              <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button>Add To Cart</Button>
+            <Button onClick={handleClick}>Add To Cart</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>

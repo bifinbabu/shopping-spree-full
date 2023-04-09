@@ -20,7 +20,7 @@ export const categories = [
   {
     id: 1,
     img: "https://img.freepik.com/free-photo/portrait-handsome-smiling-stylish-young-man-model-dressed-blue-shirt-clothes-fashion-man-posing_158538-4976.jpg?w=900&t=st=1672581208~exp=1672581808~hmac=e290e85aa98e0d378c23b06a7060e332614399a12564b26b99ba5c45f2dacf86",
-    title: "Shirts",
+    title: "Men",
     description:
       "Don't compromise on style! Grab the latest collection from ShoppingSpree.",
     bg: "f5fafd",
